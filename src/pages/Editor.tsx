@@ -1,31 +1,20 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../components/Button";
+import { Header } from "../components/Header";
 import { SaveModal } from "../components/SaveModal";
 import { useStateWithStorage } from "../hooks/useStateWithStorage";
 import { putMemo } from "../indexeddb/memos";
 
 const { useState } = React;
 
-const Header = styled.header`
-  align-content: center;
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.5rem;
-  height: 2rem;
-  left: 0;
-  line-height: 2rem;
-  padding: 0.5rem 1rem;
+const HeaderArea = styled.div`
   position: fixed;
   right: 0;
   top: 0;
-`;
-
-const HeaderControl = styled.div`
-  height: 2rem;
-  display: flex;
-  align-content: center;
+  left: 0;
 `;
 
 const Wrapper = styled.div`
@@ -61,18 +50,22 @@ const Preview = styled.div`
 
 const StorageKey = "pages/editor:text";
 
-export const Editor: React.FC = () => {
-  const [text, setText] = useStateWithStorage("", StorageKey);
+interface Props {
+  text: string;
+  setText: (text: string) => void;
+}
+
+export const Editor: React.FC<Props> = ({ text, setText }) => {
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <Header>
-        Markdown Editor
-        <HeaderControl>
+      <HeaderArea>
+        <Header title="Markdown Editor">
           <Button onClick={() => setShowModal(true)}>保存する</Button>
-        </HeaderControl>
-      </Header>
+          <Link to="/history">履歴を見る</Link>
+        </Header>
+      </HeaderArea>
       <Wrapper>
         <TextArea
           value={text}
