@@ -1,14 +1,14 @@
 import * as React from "react";
-import * as ReactMarkdown from "react-markdown";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../components/Button";
 import { Header } from "../components/Header";
 import { SaveModal } from "../components/SaveModal";
-import { useStateWithStorage } from "../hooks/useStateWithStorage";
 import { putMemo } from "../indexeddb/memos";
+import ConvertMarkdownWorker from "worker-loader!../worker/convertMarkdownWorker";
 
-const { useState } = React;
+const convertMarkdownWorker = new ConvertMarkdownWorker();
+const { useState, useEffect } = React;
 
 const HeaderArea = styled.div`
   position: fixed;
@@ -57,6 +57,17 @@ interface Props {
 
 export const Editor: React.FC<Props> = ({ text, setText }) => {
   const [showModal, setShowModal] = useState(false);
+  const [html, setHtml] = useState("");
+
+  useEffect(() => {
+    convertMarkdownWorker.onmessage = (e) => {
+      setHtml(e.data.html);
+    };
+  }, []);
+
+  useEffect(() => {
+    convertMarkdownWorker.postMessage(text);
+  }, [text]);
 
   return (
     <>
@@ -72,7 +83,7 @@ export const Editor: React.FC<Props> = ({ text, setText }) => {
           onChange={(event) => setText(event.target.value)}
         />
         <Preview>
-          <ReactMarkdown>{text}</ReactMarkdown>
+          <div dangerouslySetInnerHTML={{ __html: html }} />
         </Preview>
       </Wrapper>
       {showModal && (
