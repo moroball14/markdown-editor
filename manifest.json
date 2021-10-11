@@ -1,0 +1,16 @@
+{
+  "manifest_version": "2",
+  "version": "0.1.0",
+  "name": "MarkdownEditor",
+  "icons": [
+    {
+      "src": "./images/memos_256_256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#000099"
+}
+~~
